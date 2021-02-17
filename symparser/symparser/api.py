@@ -20,7 +20,7 @@ def topics(q: str = None):
     for d in deseases:
         deps.extend(pec.get_symptom_deps(d))
 
-    expression_queries = [{"match_phrase": {"deps": e}} for e in deps]
+    expression_queries = [{"match": {"deps": e}} for e in deps]
 
     if len(expression_queries) == 0:
         return {}
