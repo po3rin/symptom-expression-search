@@ -11,6 +11,8 @@ es = Elasticsearch("http://localhost:9200")
 pec = PatientExpressionsCoupus()
 pec.load("symptoms_expression_dict.joblib")
 
+d = DependencyAnalysis()
+
 
 @app.get("/topics/search")
 def topics(q: str = None):
@@ -21,7 +23,6 @@ def topics(q: str = None):
         deps.extend(pec.get_symptom_deps(d))
 
     expression_queries = [{"match": {"deps": e}} for e in deps]
-
     if len(expression_queries) == 0:
         return {}
 
@@ -29,13 +30,11 @@ def topics(q: str = None):
         "query": {"bool": {"should": expression_queries, "minimum_should_match": 1}}
     }
     q = json.dumps(query)
-
     return es.search(index="topics", body=query, size=3)
 
 
 @app.post("/topics")
 def topics(body: dict = Body(None)):
-    d = DependencyAnalysis()
     deps = d.run(body["title"])
 
     topic = {
@@ -43,8 +42,6 @@ def topics(body: dict = Body(None)):
         "title": body["title"],
         "deps": deps,
     }
-
-    # ドキュメントの登録
     return es.create(id=body["id"], index="topics", body=topic)
 
 
