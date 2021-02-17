@@ -1,0 +1,8 @@
+index:
+  - name: question-v1
+    mapping: es/question.json
+
+alias:
+  - name: question
+    index:
+      - question

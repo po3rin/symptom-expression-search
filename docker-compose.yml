@@ -1,0 +1,11 @@
+version: '3'
+services:
+  elasticsearch:
+    build: ./es/
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - ./:/usr/src/knuth-askd-batch
